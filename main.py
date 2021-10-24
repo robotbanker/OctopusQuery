@@ -48,3 +48,5 @@ class Octopus:
 run=Octopus()
 run.fetch_energ_consumption()
 run.plot_tariff()
+
+'typing some comment to test first push from mac'
