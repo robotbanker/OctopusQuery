@@ -48,3 +48,4 @@ class Octopus:
 run=Octopus()
 run.fetch_energ_consumption()
 run.plot_tariff()
+ 'test of commit'
