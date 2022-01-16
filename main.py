@@ -6,8 +6,6 @@ from secrets import API_key
 
 class Octopus:
     API_entry_point = "https://api.octopus.energy/v1/"
-    def __init__(self):
-        pass
 
     def fetch_tariff(self):
         tariffs_endpoint = "products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/"
@@ -47,6 +45,6 @@ class Octopus:
 
 run=Octopus()
 run.fetch_energ_consumption()
-run.plot_tariff()
+#run.plot_tariff()
 
 'typing some comment to test first push from mac'
