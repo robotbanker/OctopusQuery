@@ -20,6 +20,25 @@ class Octopus:
         'month': dailycharge * 30
     }
 
+    def __init__(self):
+        self.energy_consumption = self.fetch_energ_consumption()
+
+    def fetch_energ_consumption(self, group_by='day', page_size=1000):
+        endpoint = f"electricity-meter-points/1200050242456/meters/21L4369794/consumption/?page_size={page_size}&group_by={group_by}"
+        link = self.API_entry_point + endpoint
+        r = requests.get(link, auth=(API_key, "")).json()
+        consumptions = pd.json_normalize(r["results"])
+        consumptions['price']=consumptions['consumption']*pricekwh
+        consumptions['standig charge'] = self.dailychrg[group_by]
+        consumptions['totalprice'] = consumptions['price']+consumptions['standig charge']
+
+        if consumptions.empty:
+            print("-------------------------------------------------------")
+            print("No data on energy consumptions available at this time")
+            print("Check the website or reach out to your energy provider")
+            print("-------------------------------------------------------")
+        else:
+            return consumptions
 
     def fetch_tariff(self):
         tariffs_endpoint = "products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-C/standard-unit-rates/"
@@ -44,26 +63,9 @@ class Octopus:
         mng.full_screen_toggle()
         plt.show()
 
-    def fetch_energ_consumption(self, group_by='day', page_size=1000):
-        endpoint = f"electricity-meter-points/1200050242456/meters/21L4369794/consumption/?page_size={page_size}&group_by={group_by}"
-        link = self.API_entry_point + endpoint
-        r = requests.get(link, auth=(API_key, "")).json()
-        consumptions = pd.json_normalize(r["results"])
-        consumptions['price']=consumptions['consumption']*pricekwh
-        consumptions['standig charge'] = self.dailychrg[group_by]
-        consumptions['totalprice'] = consumptions['price']+consumptions['standig charge']
-
-        if consumptions.empty:
-            print("-------------------------------------------------------")
-            print("No data on energy consumptions available at this time")
-            print("Check the website or reach out to your energy provider")
-            print("-------------------------------------------------------")
-        else:
-            return consumptions
-
     def meter_reading(self):
         """this method returns the LTD energy consumption by first querying last 25,000 days from the API."""
-        consumptions = self.fetch_energ_consumption('day', 25000)
+        consumptions = self.energy_consumption
         ltd_consumption = consumptions['consumption'].sum()
         print(f'Your life to date energy consumption is {ltd_consumption} kW/h')
 
