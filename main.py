@@ -51,7 +51,7 @@ class OctopusConsumption:
         """this method returns the LTD energy consumption by first querying last 25,000 days from the API."""
         consumptions = self.daily_consumption
         ltd_consumption = consumptions['consumption'].sum()
-        print(f'Your life to date energy consumption is {ltd_consumption} kW/h')
+        print(f'Your life to date energy consumption is {ltd_consumption} kW/h.')
 
     def rolling_consumption(self):
         """return consumption as of yesterday and current month and prior month"""
@@ -91,7 +91,7 @@ class OctopusConsumption:
                         f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total " \
                         f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
                         f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
-                        f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}"
+                        f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}."
         print(consumption_summary)
 
 
