@@ -50,10 +50,22 @@ class OctopusConsumption:
 
     def rolling_consumption(self):
         """return consumption as of yesterday and current month"""
-        consumption = self.halfhrly_consumption.copy()
+        consumption = self.halfhrly_consumption
         consumption['string time'] = [x.strftime('%Y-%m-%d') for x in consumption['interval_start']]
+        consumption['timestamp'] = [x.strftime('%H:%M') for x in consumption['interval_start']]
         yesterday = (datetime.today() - timedelta(1)).strftime('%Y-%m-%d')
-        yesterday_consumption = consumption[consumption['string time'] == yesterday]
+        yesterday_consumption = consumption.copy()[consumption['string time'] == yesterday]
+        busiest_hours = yesterday_consumption.nlargest(n=3, columns=['consumption','totalprice'])
+        print(busiest_hours)
+        hours = []
+        [hours.append(x) for x in busiest_hours['timestamp']]
+        current_month =
+
+
+        moralizzatore = f"Yesterday {yesterday} you consumed a total of {round(yesterday_consumption['consumption'].sum(),2)} kWh." \
+                        f"this amount of energy cost you a total of £ {round(yesterday_consumption['totalprice'].sum(),2)}." \
+                        f"The busiest hours were {', '.join(hours)}, where the total charge was £ {round(busiest_hours['totalprice'].sum(),2)}. "
+        print (moralizzatore)
 
 
 run = OctopusConsumption()
