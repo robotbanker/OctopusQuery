@@ -4,13 +4,10 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from secrets import API_key
 
-pricekwh = 0.2017 # GBP VAT Incl
-dailycharge = 0.2330 # GBP VAT Inc - standing charge per each day. this model runs by 30mins slots. Hence the daily
-# charge is split across 48 daily periods
-halfhrly_charge = dailycharge/48
-
 
 class Octopus:
+    dailycharge = 0.2330 # GBP VAT Inc - standing charge per each day.
+    pricekwh = 0.2017  # GBP VAT Incl
     API_entry_point = "https://api.octopus.energy/v1/"
     dailychrg = {
         '': dailycharge / 48,
@@ -28,9 +25,14 @@ class Octopus:
         link = self.API_entry_point + endpoint
         r = requests.get(link, auth=(API_key, "")).json()
         consumptions = pd.json_normalize(r["results"])
-        consumptions['price']=consumptions['consumption']*pricekwh
+        consumptions['price'] = consumptions['consumption']*self.pricekwh
         consumptions['standig charge'] = self.dailychrg[group_by]
         consumptions['totalprice'] = consumptions['price']+consumptions['standig charge']
+        #parse date time strings as datetime
+        consumptions['interval_start'] = [(datetime.strptime(timestamps, "%Y-%m-%dT%H:%M:%S%f%z")) for timestamps in
+                                 consumptions['interval_start']]
+        consumptions['interval_end'] = [(datetime.strptime(timestamps, "%Y-%m-%dT%H:%M:%S%f%z")) for timestamps in
+                                 consumptions['interval_end']]
 
         if consumptions.empty:
             print("-------------------------------------------------------")
@@ -69,8 +71,6 @@ class Octopus:
         ltd_consumption = consumptions['consumption'].sum()
         print(f'Your life to date energy consumption is {ltd_consumption} kW/h')
 
-
 run = Octopus()
-run.fetch_energ_consumption()
 # run.plot_tariff()
-run.meter_reading()
+print(run.fetch_energ_consumption())
