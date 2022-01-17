@@ -18,12 +18,14 @@ class OctopusConsumption:
     }
 
     def __init__(self):
+
         self.daily_consumption = self.fetch_energ_consumption(group_by='day', page_size=25000)
         self.halfhrly_consumption = self.fetch_energ_consumption(group_by='', page_size=25000)
 
     def fetch_energ_consumption(self, group_by='', page_size=100):
         # sending request to API
-        endpoint = f"electricity-meter-points/1200050242456/meters/21L4369794/consumption/?page_size={page_size}&group_by={group_by}"
+        endpoint = f"electricity-meter-points/1200050242456/meters/21L4369794/consumption" \
+                   f"/?page_size={page_size}&group_by={group_by}"
         link = self.API_entry_point + endpoint
         r = requests.get(link, auth=(API_key, "")).json()
         # cast and clean data
@@ -51,7 +53,7 @@ class OctopusConsumption:
         """this method returns the LTD energy consumption by first querying last 25,000 days from the API."""
         consumptions = self.daily_consumption
         ltd_consumption = consumptions['consumption'].sum()
-        print(f'Your life to date energy consumption is {ltd_consumption} kW/h.')
+        print(f'Your life to date energy consumption is {ltd_consumption} kWh.')
 
     def rolling_consumption(self):
         """return consumption as of yesterday and current month and prior month"""
@@ -85,21 +87,23 @@ class OctopusConsumption:
         prior_month_consumption = prior_month_data['totalprice'].sum()
 
         consumption_summary = f"Yesterday {yesterday} you consumed a total of " \
-                        f"{round(yesterday_consumption['consumption'].sum(), 2)} kWh, " \
-                        f"this amount of energy cost you £ " \
-                        f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n" \
-                        f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total " \
-                        f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
-                        f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
-                        f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}."
+                              f"{round(yesterday_consumption['consumption'].sum(), 2)} kWh, " \
+                              f"this amount of energy cost you £ " \
+                              f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n" \
+                              f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total " \
+                              f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
+                              f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
+                              f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}."
         print(consumption_summary)
 
 
 run = OctopusConsumption()
 # run.plot_tariff()
 run.rolling_consumption()
-print('----------------------------')
+print('____________________________________________________________________________________________________________')
+print()
 run.meter_reading()
+
 
 class OctopusTariffs:
     API_entry_point = "https://api.octopus.energy/v1/"
