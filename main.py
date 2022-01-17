@@ -76,22 +76,22 @@ class OctopusConsumption:
         prior_period_year = prior_month_date.strftime('%Y')
         prior_month_string = prior_month_date.strftime('%B')
         # pull metrics for current and prior months
-        current_month_data = consumption[(consumption['interval_start'].dt.month == int(current_month)) & (consumption['interval_start'].dt.year == int(current_year))]
-        prior_month_data = consumption[(consumption['interval_start'].dt.month == int(prior_period_month)) & (consumption['interval_start'].dt.year == int(prior_period_year))]
+        current_month_data = consumption[(consumption['interval_start'].dt.month == int(current_month)) &
+                                         (consumption['interval_start'].dt.year == int(current_year))]
+        prior_month_data = consumption[(consumption['interval_start'].dt.month == int(prior_period_month)) &
+                                       (consumption['interval_start'].dt.year == int(prior_period_year))]
 
         current_month_consumption = current_month_data['totalprice'].sum()
         prior_month_consumption = prior_month_data['totalprice'].sum()
-        print(current_month_consumption)
-        print(prior_month_consumption)
-
-
 
         moralizzatore = f"Yesterday {yesterday} you consumed a total of " \
                         f"{round(yesterday_consumption['consumption'].sum(), 2)} kWh, " \
                         f"this amount of energy cost you £ " \
                         f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n" \
-                        f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total cost charged was £" \
-                        f" {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}"
+                        f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total " \
+                        f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
+                        f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
+                        f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}"
         print(moralizzatore)
 
 
