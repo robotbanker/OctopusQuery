@@ -84,7 +84,7 @@ class OctopusConsumption:
         current_month_consumption = current_month_data['totalprice'].sum()
         prior_month_consumption = prior_month_data['totalprice'].sum()
 
-        moralizzatore = f"Yesterday {yesterday} you consumed a total of " \
+        consumption_summary = f"Yesterday {yesterday} you consumed a total of " \
                         f"{round(yesterday_consumption['consumption'].sum(), 2)} kWh, " \
                         f"this amount of energy cost you £ " \
                         f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n" \
@@ -92,17 +92,16 @@ class OctopusConsumption:
                         f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
                         f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
                         f"while in {prior_month_string} you spent a total of £ {round(prior_month_consumption, 2)}"
-        print(moralizzatore)
+        print(consumption_summary)
 
 
 run = OctopusConsumption()
 # run.plot_tariff()
 run.rolling_consumption()
-
+print('----------------------------')
+run.meter_reading()
 
 class OctopusTariffs:
-    dailycharge = 0.2330  # GBP VAT Inc - standing charge per each day.
-    pricekwh = 0.2017  # GBP VAT Incl
     API_entry_point = "https://api.octopus.energy/v1/"
 
     def fetch_tariff(self):
