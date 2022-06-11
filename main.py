@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
+import calendar
 import matplotlib.pyplot as plt
 from secrets import API_key
 
@@ -49,6 +50,7 @@ class OctopusConsumption:
         else:
             return consumptions
 
+
     def meter_reading(self):
         """this method returns the LTD energy consumption by first querying last 25,000 days from the API."""
         consumptions = self.daily_consumption
@@ -86,24 +88,28 @@ class OctopusConsumption:
         current_month_consumption = current_month_data['totalprice'].sum()
         prior_month_consumption = prior_month_data['totalprice'].sum()
 
+        yesterday_float = float((datetime.today() - timedelta(1)).strftime('%d'))
+        daily_average = round((current_month_consumption / yesterday_float),2)
+        now = datetime.now()
+        days_this_month = calendar.monthrange(now.year, now.month)[1]
+        projected_expense = daily_average * days_this_month
+
         consumption_summary = f"Yesterday {yesterday} you consumed a total of " \
-                              f"{round(yesterday_consumption['consumption'].sum(), 2)} kWh, " \
-                              f"this amount of energy cost you £ " \
-                              f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n" \
+                              f"<b>{round(yesterday_consumption['consumption'].sum(), 2)}kWh </b>, "\
+                              f"this amount of energy cost you <b>£" \
+                              f"{round(yesterday_consumption['totalprice'].sum(), 2)}.\n</b> <br><br> " \
                               f"The busiest 30 minutes periods were the ones at: {', '.join(hours)}, where the total " \
-                              f"cost charged was £ {round(busiest_hours['totalprice'].sum(), 2)}.\nFor the month of" \
-                              f" {current_month_string} you spent £ {round(current_month_consumption, 2)} so far, " \
+                              f"cost charged was <b>£{round(busiest_hours['totalprice'].sum(), 2)}.</b> <br>" \
+                              f" For the month of {current_month_string} you spent <b>£" \
+                              f"{round(current_month_consumption, 2)}</b> so far, " \
                               f"while in {prior_month_string} you spent a total of " \
-                              f"£ {round(prior_month_consumption, 2)}."
-        print(consumption_summary)
+                              f"£ {round(prior_month_consumption, 2)}.<br><br>" \
+                              f"Your daily average energy expense for this month is " \
+                              f"<b>£{daily_average}</b>.<br>" \
+                              f"At this pace, your estimated total expense for the current month equals <b>£{projected_expense}</b>"
 
+        return consumption_summary
 
-run = OctopusConsumption()
-# run.plot_tariff()
-run.rolling_consumption()
-print('____________________________________________________________________________________________________________')
-print()
-run.meter_reading()
 
 
 class OctopusTariffs:
