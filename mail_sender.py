@@ -26,7 +26,8 @@ def mail_sender(text, mail_subject):
     session.starttls()  # enable security
     session.login(sender_address, sender_pass)  # login with mail_id and password
     text = message.as_string()
-    session.sendmail(sender_address, receiver_address, text)
+    session.send_message(message)
+    #session.sendmail(sender_address, receiver_address, text)
     session.quit()
 
 
